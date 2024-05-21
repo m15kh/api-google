@@ -7,6 +7,7 @@ from googleapiclient.errors import HttpError
 
 creds = None
 
+#token = '7138018453:AAHlrep8ra64s_Sfimn4wzgXgmZhyXto7KQ'
 
 # This function checks if there is existing Authentation Token,
 # otherwise it generates a new one 
@@ -42,22 +43,29 @@ serviceTasks = getService()
 
 # Show Tasklists and ID
 def listTaskList():
+    lst_header_tasks = []
     result = serviceTasks.tasklists().list(maxResults=10).execute()
     taskList = result.get("items", [])
     for item in taskList:
         itemID = item.get('id')
         itemName = item.get('title')
-        print('Title: ' + itemName + ' ID:' + itemID)
+        lst_header_tasks.append((itemName, itemID))
+    print(lst_header_tasks)
+    return  lst_header_tasks
 
 
 # Show Task from a Tasklist
 def getTaskFromList(listID, filter=True):
+    lst_detail_tasks = []
     tasklist = serviceTasks.tasks().list(tasklist=listID, showHidden=filter).execute()
     tasks = tasklist.get("items", [])
     for task in tasks:
         title = task.get('title')
         id = task.get('id')
-        print('Title: ' + title + ' ID:' + id)
+        lst_detail_tasks.append((title, id))
+    print(lst_detail_tasks)
+    print(tasks)
+    return lst_detail_tasks
 
 
 # Status:
@@ -86,7 +94,7 @@ def setTaskStatus(itemID, status):
         print('item not found')
 
 
-def main():
+def maincode():
     try:
         # LEt's check if a token.json is created
         getCredentials()
@@ -96,18 +104,14 @@ def main():
 
         # get Task from List
         # true here is whether to show completed tasks
-        # getTaskFromList('REpLbnhrS1JCZ1JrMFBsVA',False)
+        getTaskFromList('REpLbnhrS1JCZ1JrMFBsVA',False)
 
         # mark a task to complete
-        setTaskStatus('cnJ4M2lFRlJPUXRvUV9RWg','needsAction')
+        # setTaskStatus('cnJ4M2lFRlJPUXRvUV9RWg','needsAction')
 
     except HttpError as err:
         print(err)
 
 
-def ShowlistTaskList():
-
-
-# call the main
-if __name__ == "__main__":
-    main()
+listTaskList()
+getTaskFromList('REpLbnhrS1JCZ1JrMFBsVA',False)
